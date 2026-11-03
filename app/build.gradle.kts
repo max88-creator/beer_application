@@ -40,9 +40,17 @@ android {
 
 dependencies {
 
+    implementation(libs.androidx.room.paging)
+
+    implementation(libs.moshi.kotlin)
+    implementation (libs.converter.moshi)
+
+
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.compiler)
+    implementation(libs.androidx.paging.common)
+    implementation(libs.androidx.paging.compose)
     ksp(libs.androidx.room.compiler)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
