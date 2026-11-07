@@ -6,9 +6,9 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import coil.network.HttpException
-import com.example.lacknerpagination.data.local.database.BeerDataBase
 import com.example.lacknerpagination.data.remote.BeerApi
 import com.example.lacknerpagination.data.toBeerEntity
+import com.example.lacknerpagination.data_base.BeerDataBase
 import kotlinx.coroutines.delay
 import okio.IOException
 import kotlin.time.Duration.Companion.milliseconds
@@ -46,10 +46,10 @@ class BeerRemoteMediator(
             )
             beerDb.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    beerDb.dao.clearAll()
+                    beerDb.beerDao().clearAll()
                 }
                 val beerEntities = beers.map { it.toBeerEntity() }
-                beerDb.dao.upsertAll(beerEntities)
+                beerDb.beerDao().upsertAll(beerEntities)
             }
             MediatorResult.Success(
                 endOfPaginationReached = beers.isEmpty()

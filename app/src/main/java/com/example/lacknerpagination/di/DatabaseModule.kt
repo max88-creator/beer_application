@@ -5,10 +5,12 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.room.Room
-import com.example.lacknerpagination.data.local.database.BeerDataBase
 import com.example.lacknerpagination.data.local.models.BeerEntity
 import com.example.lacknerpagination.data.local.models.BeerRemoteMediator
 import com.example.lacknerpagination.data.remote.BeerApi
+import com.example.lacknerpagination.data_base.BeerDataBase
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,11 +38,14 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideBeerApi(): BeerApi {
-return Retrofit.Builder()
-    .baseUrl(BeerApi.BASE_URL)
-    .addConverterFactory(MoshiConverterFactory.create())
-    .build()
-    .create()
+        val moshi = Moshi.Builder()
+            .addLast(KotlinJsonAdapterFactory())
+            .build()
+        return Retrofit.Builder()
+            .baseUrl(BeerApi.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+            .create(BeerApi::class.java)
     }
 
     @OptIn(ExperimentalPagingApi::class)
@@ -49,15 +54,17 @@ return Retrofit.Builder()
     fun provideBeerPager(
         beerDB: BeerDataBase, beerApi: BeerApi
     ): Pager<Int, BeerEntity> {
-return Pager(
-    config = PagingConfig(pageSize = 20),
-    remoteMediator = BeerRemoteMediator(
-        beerDb = beerDB,
-        beerApi = beerApi
-    ),
-   pagingSourceFactory = {
-       beerDB.dao.pagingSource()
-   }
-)
+        return Pager(
+            config = PagingConfig(pageSize = 20),
+            remoteMediator = BeerRemoteMediator(
+                beerDb = beerDB,
+                beerApi = beerApi
+            ),
+            pagingSourceFactory = {
+                beerDB.beerDao().pagingSource()
+            }
+        )
     }
 }
+
+

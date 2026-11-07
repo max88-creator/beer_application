@@ -11,6 +11,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.example.lacknerpagination.presentation.screens.BeerScreen
+import com.example.lacknerpagination.presentation.view_model.BeerViewModel
 import com.example.lacknerpagination.ui.theme.LacknerPaginationTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,9 +25,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LacknerPaginationTheme {
+                val viewModel = hiltViewModel<BeerViewModel>()
+                val beers = viewModel.beerPagingFlow.collectAsLazyPagingItems()
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
+                    BeerScreen(
+                        beers = beers,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }

@@ -6,3 +6,4 @@ plugins {
     alias(libs.plugins.hilt.plugin) apply false
     alias(libs.plugins.serialization) apply false
 }
+

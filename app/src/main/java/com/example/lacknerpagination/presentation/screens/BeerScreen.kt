@@ -13,18 +13,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.lacknerpagination.domain.Beer
 import com.example.lacknerpagination.presentation.view_model.BeerViewModel
 
 @Composable
 fun BeerScreen(
-    viewModel: BeerViewModel,
-    beers: LazyPagingItems<Beer>
+    viewModel: BeerViewModel = hiltViewModel(),
+    beers: LazyPagingItems<Beer>,
+    modifier: Modifier = Modifier
 ) {
-    val beerList = viewModel.beerPagingFlow.collectAsLazyPagingItems()
 
     val context = LocalContext.current
     LaunchedEffect(key1 = beers.loadState) {
@@ -50,7 +50,9 @@ fun BeerScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                items(beerList) { beer ->
+                items(count = beers.itemCount) { index ->
+                    val beer = beers[index]
+
                     if (beer != null) {
                         BeerItem(
                             beer = beer,
@@ -67,3 +69,4 @@ fun BeerScreen(
         }
     }
 }
+
